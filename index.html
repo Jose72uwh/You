@@ -1,0 +1,138 @@
+<html lang="es">
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <title>Buscador de Películas TMDB</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <script type="importmap">
+    {
+      "imports": {
+        "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.prod.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>🎬 Buscador de Películas TMDB</h1>
+      <form @submit.prevent="buscarPeliculas">
+        <input 
+          v-model="query"
+          :disabled="cargando"
+          placeholder="Buscar película..."
+          autofocus
+          autocomplete="off"
+          @keyup.enter="buscarPeliculas"
+        />
+        <button type="submit" :disabled="!query || cargando">
+          {{ cargando ? 'Buscando...' : 'Buscar' }}
+        </button>
+      </form>
+    </header>
+
+    <div class="link-input-contenedor">
+      <label for="movieLinkInput" class="codigo-fuente-label">Opcional: Link directo/embed del video</label>
+      <input
+        id="movieLinkInput"
+        v-model="videoLink"
+        placeholder="Pega aquí el link del video .mp4 o embed…"
+        autocomplete="off"
+        type="text"
+        inputmode="url"
+        :disabled="cargando"
+      />
+      <!-- Opciones adicionales de links -->
+      <input
+        v-model="videoLink2"
+        placeholder="Opción 2: Otro link directo/embed…"
+        autocomplete="off"
+        type="text"
+        inputmode="url"
+        class="extra-link-input"
+        :disabled="cargando"
+        style="margin-top:0.3em;"
+      />
+      <input
+        v-model="videoLink3"
+        placeholder="Opción 3: Otro link directo/embed…"
+        autocomplete="off"
+        type="text"
+        inputmode="url"
+        class="extra-link-input"
+        :disabled="cargando"
+        style="margin-top:0.3em;"
+      />
+      <button
+        type="button"
+        class="agregar-links-btn"
+        @click="agregarLinks"
+        :disabled="cargando && !query"
+        style="margin-top:0.4em;align-self:flex-end;"
+      >➕ Agregar opciones</button>
+      <small class="link-input-help">Puedes dejar vacío algún campo si no tienes más links.</small>
+    </div>
+
+    <!-- Nuevo cuadro para el código de fuente + botón copiar -->
+    <div class="codigo-fuente-contenedor">
+      <label for="codigoFuente" class="codigo-fuente-label">Código de fuente:</label>
+      <textarea
+        id="codigoFuente"
+        v-model="codigoFuente"
+        placeholder="Pega tu código de fuente aquí..."
+        rows="3"
+        spellcheck="false"
+        autocapitalize="off"
+      ></textarea>
+      <button 
+        v-if="codigoFuente"
+        type="button"
+        class="copiar-codigo-btn"
+        @click="copiarCodigoFuente"
+        :aria-label="'Copiar código html al portapapeles'"
+      >
+        📋 Copiar HTML
+      </button>
+      <span v-if="copiado" class="copiado-msg">¡Copiado!</span>
+    </div>
+
+    <main>
+      <div v-if="error" class="msg error">{{ error }}</div>
+      <div v-if="!peliculas.length && query && !cargando && !error" class="msg">Sin resultados.</div>
+      <div class="peliculas-grid">
+        <div
+          v-for="pelicula in peliculas"
+          :key="pelicula.id"
+          class="pelicula"
+          role="button"
+          tabindex="0"
+          @click="seleccionarPelicula(pelicula)"
+          @keyup.enter="seleccionarPelicula(pelicula)"
+          :title="'Generar código de fuente para ' + pelicula.title"
+          style="cursor:pointer;outline:0;"
+        >
+          <img
+            :src="getPoster(pelicula.poster_path)"
+            :alt="pelicula.title"
+            loading="lazy"
+            class="poster"
+            @error="e => e.target.src = noPoster"
+          />
+          <div class="info">
+            <h2>{{ pelicula.title }}</h2>
+            <div class="meta">
+              <span>🎞️ {{ pelicula.release_date?.slice(0,4) || 'Sin año' }}</span>
+              <span>⭐ {{ pelicula.vote_average?.toFixed(1) ?? '0.0' }}</span>
+            </div>
+            <p class="sinopsis">{{ pelicula.overview || 'Sin sinopsis.' }}</p>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <small>Datos de películas proporcionados por <a href="https://themoviedb.org" target="_blank">TMDB</a>.</small>
+    </footer>
+  </div>
+  <script type="module" src="main.js"></script>
+</body>
+</html>
