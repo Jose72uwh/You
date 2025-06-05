@@ -1,0 +1,306 @@
+body {
+  font-family: system-ui, sans-serif;
+  margin: 0;
+  background: #151d24;
+  color: #f5f6fa;
+}
+
+#app {
+  max-width: 600px;
+  margin: auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  padding: 1rem 1.2rem 0.3rem 1.2rem;
+  background: #223243;
+  box-shadow: 0 4px 8px #0001;
+  border-radius: 0 0 18px 18px;
+}
+
+h1 {
+  margin: 0 0 8px 0;
+  font-size: 1.5rem;
+  text-align: center;
+  letter-spacing: 0.015em;
+}
+
+form {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+input[type="text"], input, input[type="search"] {
+  width: 70%;
+  padding: .8rem;
+  font-size: 1rem;
+  border-radius: 1rem;
+  border: none;
+  background: #182432;
+  color: #f5f6fa;
+  outline: none;
+  transition: background 0.2s;
+}
+input:focus {background: #26374a;}
+
+button {
+  background: #2de1fc;
+  color: #0c223a;
+  font-weight: bold;
+  border: none;
+  border-radius: 1rem;
+  padding: 0 .8rem;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px #0002;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+button:active {background: #14b8c7;}
+
+/* === Cuadro de código fuente y botón copiar === */
+.codigo-fuente-contenedor {
+  padding: 0.6rem 1.4rem 0.3rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  position: relative;
+}
+
+.codigo-fuente-label {
+  font-size: 1.01rem;
+  color: #8bb2c9;
+  margin-bottom: 0.12em;
+}
+
+#codigoFuente {
+  width: 100%;
+  min-height: 2.5em;
+  max-width: 100%;
+  resize: vertical;
+  border-radius: 9px;
+  background: #1b2735;
+  color: #ffe;
+  border: 1px solid #223243;
+  font-size: 0.96rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", "Consolas", "Liberation Mono", monospace;
+  padding: 0.7em 0.8em;
+  box-sizing: border-box;
+  transition: border-color 0.18s;
+  outline: none;
+}
+#codigoFuente:focus {
+  border-color: #2de1fc;
+}
+
+.copiar-codigo-btn {
+  margin-top: 0.44em;
+  align-self: flex-end;
+  background: #2de1fc;
+  color: #092331;
+  padding: 0.5em 1.1em;
+  border-radius: 0.9em;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 7px #0005;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, box-shadow 0.14s;
+}
+.copiar-codigo-btn:active {
+  background: #14b8c7;
+  color: #fff;
+}
+.copiado-msg {
+  color: #18e759;
+  font-size: 1rem;
+  margin-top: 4px;
+  align-self: flex-end;
+  font-weight: bold;
+  transition: opacity 0.2s;
+}
+
+main {
+  flex: 1;
+  padding: 1rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.peliculas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+  width: 100%;
+  margin: 0 auto;
+  max-width: 420px;
+}
+
+@media(max-width: 480px) {
+  .peliculas-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    max-width: 350px;
+  }
+  .codigo-fuente-contenedor {
+    padding: 0.4rem 0.6rem 0.15rem 0.6rem;
+  }
+  .copiar-codigo-btn {
+    font-size: 0.96rem;
+    padding: 0.44em 0.96em;
+  }
+}
+
+.pelicula {
+  background: #1d2836;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 3px 10px #0002;
+  font-size: 0.94rem;
+}
+
+.pelicula[role="button"] {
+  transition: box-shadow 0.14s, background 0.14s;
+  outline: none;
+}
+
+.pelicula[role="button"]:hover, .pelicula[role="button"]:focus {
+  box-shadow: 0 0 0 3px #2de1fc88, 0 3px 10px #0003;
+  background: #224157;
+}
+
+.poster {
+  width: 100%;
+  aspect-ratio: 2/3;
+  background: #26374a;
+  object-fit: cover;
+  display: block;
+  height: 102px;
+  max-height: 102px;
+}
+
+.info {
+  padding: 0.5rem 0.65rem 0.7rem 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+h2 {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.17;
+}
+
+.meta {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.89rem;
+  color: #82d4ef;
+}
+
+.sinopsis {
+  font-size: 0.86rem;
+  color: #b0bbc6;
+  margin: 0.2rem 0 0 0;
+  line-height: 1.18;
+  max-height: 3.2em;
+  overflow: hidden;
+}
+
+/* Cuadro para ingresar link directo/embed debajo del buscador */
+.link-input-contenedor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.11rem;
+  padding: 0.28em 1.35em 0.5em 1.35em;
+  margin-bottom: 0.15em;
+}
+.link-input-contenedor input[type="text"], .link-input-contenedor input[type="url"], .link-input-contenedor .extra-link-input {
+  width: 100%;
+  padding: .65em;
+  margin-top: 0.2em;
+  font-size: 1rem;
+  border-radius: 0.81em;
+  border: none;
+  background: #1b2735;
+  color: #eee;
+  outline: none;
+  border: 1px solid #223243;
+  margin-bottom: 0.12em;
+  box-sizing: border-box;
+}
+
+.link-input-contenedor .extra-link-input {
+  margin-bottom: 0.09em;
+  background: #192637;
+  font-size: 0.97em;
+}
+
+.link-input-contenedor input:focus {
+  border-color: #2de1fc;
+}
+.link-input-help {
+  color: #93ceec;
+  font-size: 0.93em;
+  margin-bottom: 0.2em;
+}
+
+@media(max-width: 480px) {
+  .link-input-contenedor {
+    padding: 0.18em 0.7em 0.25em 0.7em;
+  }
+  .link-input-contenedor input[type="text"] {
+    font-size: 0.98em;
+  }
+  .link-input-help {
+    font-size: 0.88em;
+  }
+}
+
+.agregar-links-btn {
+  background: #10ec73;
+  color: #033a14;
+  font-weight: bold;
+  border: none;
+  border-radius: 1em;
+  padding: 0.4em 1.1em;
+  font-size: .98rem;
+  box-shadow: 0 2px 7px #0002;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  margin-left: auto;
+  margin-top: 0.28em;
+  min-width: 100px;
+}
+.agregar-links-btn:active {
+  background: #149e5c;
+  color: #fff;
+}
+
+footer {
+  text-align: center;
+  font-size: .95rem;
+  color: #8bb2c9;
+  padding: 0.7rem 0;
+}
+a {
+  color: #2de1fc;
+  text-decoration: none;
+}
+a:hover {text-decoration: underline;}
+
+.msg {
+  color: #a6d8f4;
+  margin: 2.5rem 0 1rem 0;
+  font-size: 1.08rem;
+  text-align: center;
+}
+.msg.error {
+  color: #ff4666;
+}
