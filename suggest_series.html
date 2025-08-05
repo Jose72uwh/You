@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sugiere una Serie</title>
+    <style>
+        /* General Dark Theme */
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #000; /* Pure black background */
+            color: #f4f4f4; /* Light text color */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            /* Starry background using multiple radial gradients repeating */
+            background-image:
+                /* Fainter, smaller stars */
+                radial-gradient(circle at 10% 20%, #ccc 0.5px, transparent 1.5px),
+                radial-gradient(circle at 30% 70%, #ccc 0.5px, transparent 1.5px),
+                radial-gradient(circle at 50% 50%, #ccc 0.5px, transparent 1.5px),
+                radial-gradient(circle at 70% 30%, #ccc 0.5px, transparent 1.5px),
+                radial-gradient(circle at 90% 80%, #ccc 0.5px, transparent 1.5px),
+                /* Brighter, medium stars */
+                radial-gradient(circle at 25% 60%, #fff 1px, transparent 2px),
+                radial-gradient(circle at 60% 15%, #fff 1px, transparent 2px),
+                radial-gradient(circle at 80% 45%, #fff 1px, transparent 2px),
+                /* Larger, most prominent stars */
+                radial-gradient(circle at 15% 90%, #ffe 1.5px, transparent 2.5px),
+                radial-gradient(circle at 75% 25%, #ffe 1.5px, transparent 2.5px);
+            background-size: 150px 150px; /* Size of the repeating pattern for all layers */
+            background-repeat: repeat; /* Ensure the pattern repeats to fill the screen */
+        }
+
+        /* Remove blue outline on focus for interactive elements */
+        *:focus {
+            outline: none;
+        }
+
+        a:focus,
+        button:focus,
+        input:focus,
+        textarea:focus,
+        .search-results li:focus {
+            outline: none; /* Remove default outline */
+        }
+
+        .container {
+            background-color: #2c2c2c; /* Slightly lighter dark for container */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* More prominent shadow */
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1, .tmdb-search-section h2, #suggestionForm h2 {
+            text-align: center;
+            color: #00aaff; /* Bright blue for headings */
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .tmdb-search-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #444; /* Darker separator line */
+        }
+
+        .search-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-group input[type="text"] {
+            flex-grow: 1;
+            margin-bottom: 0;
+            background-color: #3c3c3c; /* Darker input background */
+            color: #f4f4f4; /* Light text */
+            border: 1px solid #555; /* Darker border */
+        }
+
+        /* Improved Button Styling */
+        button {
+            display: block;
+            width: 100%;
+            background-color: #007bff; /* Blue button */
+            color: white;
+            padding: 12px 20px; /* Increased padding */
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease, transform 0.1s ease; /* Added transform for click effect */
+            margin-top: 15px; /* Increased space above submit button */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle button shadow */
+        }
+
+        button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        button:active {
+             background-color: #004085; /* Even darker on click */
+             transform: translateY(1px); /* Slight press effect */
+             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Specific style for the search button */
+        .search-group button {
+            width: auto;
+            flex-shrink: 0;
+            padding: 10px 15px; /* Slightly less padding than submit button */
+            margin-bottom: 0;
+            font-size: 1rem;
+            margin-top: 0; /* Remove top margin in search group */
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #ccc; /* Slightly muted text */
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #f4f4f4; /* Label color */
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            background-color: #3c3c3c;
+            color: #f4f4f4;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        #thankYouMessage {
+            text-align: center;
+            margin-top: 20px;
+            color: #28a745; /* Green for success */
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Chat ID Instruction Block (adapted for dark theme) */
+        .chat-id-instruction {
+            background-color: #4a3c00; /* Darker warning yellow */
+            border-left: 5px solid #ffc107;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #ffebb2; /* Lighter yellow text */
+        }
+
+        .chat-id-instruction h2 {
+            margin-top: 0;
+            color: #ffc107; /* Yellow heading */
+            font-size: 1.2em;
+        }
+
+        .chat-id-instruction code {
+            background-color: #5a5a5a; /* Dark grey code background */
+            color: #f4f4f4; /* Light code text */
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            word-break: break-all;
+        }
+
+        /* TMDB Search Results Styling (adapted for dark theme) */
+        .search-results {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0 0 0;
+            border: 1px solid #555; /* Darker border */
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: #3c3c3c; /* Dark results background */
+        }
+
+        .search-results li {
+            padding: 10px;
+            border-bottom: 1px solid #555; /* Darker separator */
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s ease;
+            color: #ccc; /* Result text color */
+        }
+
+        .search-results li:last-child {
+            border-bottom: none;
+        }
+
+        .search-results li:hover {
+            background-color: #4c4c4c; /* Lighter dark on hover */
+        }
+
+        .search-results li img {
+            width: 40px;
+            height: 60px;
+            object-fit: cover;
+            margin-right: 10px;
+            border-radius: 3px;
+            border: 1px solid #666; /* Subtle image border */
+        }
+
+        .search-results li .result-info {
+            flex-grow: 1;
+        }
+
+        .search-results li .result-info strong {
+            display: block;
+            font-size: 1em;
+            color: #f4f4f4; /* Highlight title */
+        }
+
+        .search-results li .result-info span {
+            font-size: 0.9em;
+            color: #ccc; /* Muted year */
+        }
+
+        .search-results li .no-poster {
+            width: 40px;
+            height: 60px;
+            background-color: #555; /* Darker placeholder */
+            margin-right: 10px;
+            border-radius: 3px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8em;
+            text-align: center;
+            color: #bbb; /* Lighter text on placeholder */
+            border: 1px solid #666;
+        }
+
+        .search-status {
+            text-align: center;
+            color: #bbb; /* Muted status text */
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* Mobile specific adjustments (Keep or adapt for dark theme) */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+                margin-bottom: 15px;
+            }
+
+            button {
+                font-size: 1rem;
+                padding: 12px;
+            }
+
+            .search-group {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .search-group button {
+                width: 100%;
+                margin-top: 5px;
+            }
+
+            .chat-id-instruction {
+                font-size: 0.8em;
+            }
+
+            .chat-id-instruction h2 {
+                font-size: 1.1em;
+            }
+        }
+
+        /* Added style for back button */
+        .back-button {
+            background-color: #555; /* Dark grey for a neutral button */
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+            text-decoration: none; /* For anchor tag */
+            display: inline-flex; /* To align icon and text */
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 20px; /* Space below the button */
+        }
+
+        .back-button:hover {
+            background-color: #666;
+        }
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Back Button -->
+        <a href="index.html" class="back-button">
+            <i class="fas fa-arrow-left"></i> Volver a Inicio
+        </a>
+
+        <h1>Sugiere una Serie para la App</h1>
+        <p>¿Tienes alguna serie favorita que te gustaría ver agregada a nuestra aplicación? ¡Cuéntanos!</p>
+
+        <!-- Instruction block for Telegram Chat ID setup -->
+        <div id="chatIdInstruction" class="chat-id-instruction hidden">
+            <h2>Configuración Necesaria</h2>
+            <p>Para que las sugerencias lleguen a tu bot de Telegram, necesitas configurar el <strong>ID del chat</strong> correcto.</p>
+            <p>Has proporcionado un número (<code>5269574715</code>), que parece ser tu <strong>ID de CHAT</strong>. Si los mensajes no llegan, asegúrate de que el bot ha iniciado una conversación contigo o con el grupo/canal.</p>
+            <p>Si aún no funciona, puedes verificar tu ID de chat actualizando esta URL (reemplaza <code>YOUR_BOT_TOKEN</code> con el token de tu bot, que ya está prellenado abajo) <strong>después de enviar un mensaje al bot</strong>:<br><code>https://api.telegram.org/bot7602390735:AAGOApaa5tlzmE28_X8-fPhcGMcrHscTvmU/getUpdates</code></p>
+            <p>Busca el objeto "<code>chat</code>" dentro de "<code>message</code>". El campo "<code>id</code>" es tu <strong>ID de CHAT</strong>. Si es diferente, edita <code>script.js</code> y reemplaza <code>'5269574715'</code>.</p>
+        </div>
+        <!-- End Instruction block -->
+
+        <!-- TMDB Search Section -->
+        <div class="tmdb-search-section">
+            <h2>Buscar Series en TMDB</h2>
+            <div class="form-group search-group">
+                <input type="text" id="tmdbSearchInput" placeholder="Buscar título de serie...">
+                <button type="button" id="tmdbSearchButton">Buscar</button>
+            </div>
+            <div id="tmdbSearchResults" class="search-results">
+                <!-- Search results will be displayed here -->
+            </div>
+             <p id="searchStatus" class="search-status"></p> <!-- For messages like "No results found" -->
+        </div>
+        <!-- End TMDB Search Section -->
+
+        <form id="suggestionForm">
+             <h2>Detalles de la Sugerencia (Automático si buscas una serie, puedes editar)</h2>
+            <div class="form-group">
+                <label for="seriesTitle">Título de la Serie:</label>
+                <input type="text" id="seriesTitle" name="seriesTitle" required>
+            </div>
+
+            <div class="form-group">
+                <label for="seriesYear">Año de Estreno (opcional):</label>
+                <input type="number" id="seriesYear" name="seriesYear">
+            </div>
+
+            <div class="form-group">
+                <label for="seriesGenre">Género (opcional):</label>
+                <input type="text" id="seriesGenre" name="seriesGenre">
+            </div>
+
+            <div class="form-group">
+                <label for="seriesComments">Comentarios o Por qué la Sugieres (opcional):</label>
+                <textarea id="seriesComments" name="seriesComments" rows="4"></textarea>
+            </div>
+
+            <!-- NEW OPTIONAL SECTION FOR EPISODE REPORTING -->
+            <div class="form-group" style="margin-top: 25px;">
+                <input type="checkbox" id="enableEpisodeReport" style="margin-right: 8px;">
+                <label for="enableEpisodeReport" style="display: inline; font-weight: normal; cursor: pointer;">
+                    Marcar si quieres reportar un problema o detalle de un capítulo específico
+                </label>
+            </div>
+
+            <div id="episodeReportSection" class="hidden" style="background-color: #3c3c3c; padding: 15px; border-radius: 6px; margin-top: 15px; border: 1px dashed #555;">
+                <h3>Detalles de Capítulo a Reportar</h3>
+                <p style="font-size: 0.9em; color: #bbb;">(Estos campos son opcionales y solo se enviarán si están marcados y tienen contenido.)</p>
+                <div class="form-group">
+                    <label for="episodeSeason">Número de Temporada:</label>
+                    <input type="number" id="episodeSeason" name="episodeSeason" min="1">
+                </div>
+                <div class="form-group">
+                    <label for="episodeNumber">Número de Capítulo:</label>
+                    <input type="number" id="episodeNumber" name="episodeNumber" min="1">
+                </div>
+                <div class="form-group">
+                    <label for="episodeProblem">Descripción del problema/detalle:</label>
+                    <textarea id="episodeProblem" name="episodeProblem" rows="3"></textarea>
+                </div>
+            </div>
+            <!-- END NEW OPTIONAL SECTION -->
+
+            <button type="submit">Enviar Sugerencia de Serie a Telegram</button>
+        </form>
+
+        <p id="thankYouMessage" class="hidden">¡Gracias por tu sugerencia!</p>
+    </div>
+
+    <script type="module">
+        // ==================================================================================================
+        // IMPORTANT SETUP INSTRUCTIONS!
+        // ==================================================================================================
+        // To make this form send messages to your Telegram bot, you MUST replace the placeholder below.
+        //
+        // 1. TELEGRAM_BOT_TOKEN: This is provided by BotFather when you create your bot.
+        //    You have provided it as 7602390735:AAGOApaa5tlzmE28_X8-fPhcGMcrHscTvmU, which is used below.
+        //
+        // 2. TELEGRAM_CHAT_ID: This is the ID of the chat (a user, group, or channel) where the bot
+        //    will send the messages. It has been updated with the ID found from your getUpdates data.
+        //
+        // **SECURITY WARNING:** Placing your Telegram Bot API key directly in client-side JavaScript
+        // is HIGHLY INSECURE. Anyone viewing your page source can steal and misuse this key.
+        // For a production application, you should always send data to a secure backend server
+        // which then forwards the message to the Telegram Bot API using the key stored securely on the server.
+        // This client-side implementation is for demonstration purposes ONLY.
+        // ==================================================================================================
+
+
+        const TELEGRAM_BOT_TOKEN = '7602390735:AAGOApaa5tlzmE28_X8-fPhcGMcrHscTvmU'; // Your Telegram Bot API Token
+        const TELEGRAM_CHAT_ID = '5269574715'; // <-- !! REPLACE THIS WITH YOUR ACTUAL CHAT ID IF DIFFERENT !!
+
+        // ==================================================================================================
+        // TMDB API Setup
+        // ==================================================================================================
+        const TMDB_API_KEY = '1076ac03cba68c1680094495c8506ad7'; // Your TMDB API Key
+        const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+        const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w92'; // Use w92 for search results thumbnails
+
+        // Store selected series data from search
+        let selectedSeriesData = null;
+        let searchTimeout = null; // Variable for debounce
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const suggestionForm = document.getElementById('suggestionForm');
+            const thankYouMessage = document.getElementById('thankYouMessage');
+            const chatIdInstruction = document.getElementById('chatIdInstruction');
+            const tmdbSearchInput = document.getElementById('tmdbSearchInput');
+            const tmdbSearchButton = document.getElementById('tmdbSearchButton');
+            const tmdbSearchResults = document.getElementById('tmdbSearchResults');
+            const searchStatus = document.getElementById('searchStatus'); // Element to show search status
+
+
+            const seriesTitleInput = document.getElementById('seriesTitle');
+            const seriesYearInput = document.getElementById('seriesYear');
+            const seriesGenreInput = document.getElementById('seriesGenre'); // This will not be automatically filled by TMDB search results
+            const seriesCommentsInput = document.getElementById('seriesComments');
+
+            // New elements for episode reporting
+            const enableEpisodeReportCheckbox = document.getElementById('enableEpisodeReport');
+            const episodeReportSection = document.getElementById('episodeReportSection');
+            const episodeSeasonInput = document.getElementById('episodeSeason');
+            const episodeNumberInput = document.getElementById('episodeNumber');
+            const episodeProblemInput = document.getElementById('episodeProblem');
+
+
+            // Show/hide the instruction block based on whether the CHAT_ID is set (checks if it's the original placeholder)
+            // Check if the ID is the *exact* placeholder string or an empty string after trimming
+            if (TELEGRAM_CHAT_ID === 'YOUR_CHAT_ID' || TELEGRAM_CHAT_ID.trim() === '') {
+                chatIdInstruction.classList.remove('hidden');
+            } else {
+                chatIdInstruction.classList.add('hidden');
+            }
+
+            // Toggle visibility of episode report section
+            enableEpisodeReportCheckbox.addEventListener('change', () => {
+                if (enableEpisodeReportCheckbox.checked) {
+                    episodeReportSection.classList.remove('hidden');
+                } else {
+                    episodeReportSection.classList.add('hidden');
+                    // Clear fields when hiding to prevent sending stale data
+                    episodeSeasonInput.value = '';
+                    episodeNumberInput.value = '';
+                    episodeProblemInput.value = '';
+                }
+            });
+
+            // --- TMDB Search Functionality ---
+            // Manual search button click handler
+            tmdbSearchButton.addEventListener('click', () => {
+                const query = tmdbSearchInput.value.trim();
+                if (query.length < 2) {
+                    displaySearchStatus('Por favor, ingresa al menos 2 caracteres para buscar.');
+                    tmdbSearchResults.innerHTML = ''; // Clear previous results
+                    return;
+                }
+                performTmdbSearch(query);
+            });
+
+             // Live search as user types with debounce
+            tmdbSearchInput.addEventListener('input', () => {
+                clearTimeout(searchTimeout); // Clear previous timeout
+                const query = tmdbSearchInput.value.trim();
+
+                if (query.length < 2) {
+                    displaySearchStatus('Ingresa más para buscar...');
+                    tmdbSearchResults.innerHTML = '';
+                    selectedSeriesData = null; // Reset selection if query becomes too short
+                    return;
+                }
+
+                searchTimeout = setTimeout(() => {
+                    performTmdbSearch(query);
+                }, 500); // 500ms debounce delay
+            });
+
+             // Allow pressing Enter in the search input to trigger search (manual, without debounce)
+             tmdbSearchInput.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Prevent form submission if input is inside a form
+                    clearTimeout(searchTimeout); // Clear any pending debounced search
+                    tmdbSearchButton.click(); // Trigger manual search
+                }
+             });
+
+
+            function performTmdbSearch(query) {
+                displaySearchStatus('Buscando...');
+                tmdbSearchResults.innerHTML = ''; // Clear previous results
+                selectedSeriesData = null; // Reset selected series
+
+                // Changed from search/movie to search/tv and added include_adult parameter
+                const searchUrl = `${TMDB_BASE_URL}/search/tv?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}&language=es-ES&include_adult=true`;
+
+                fetch(searchUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                             displaySearchStatus('Error al buscar en TMDB.');
+                             console.error('TMDB Search API error:', response.status);
+                            return response.json().then(err => Promise.reject(err)); // Read error body
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Filter results to only include series marked as adult
+                        const adultSeries = data.results.filter(series => series.adult === true);
+
+                        if (adultSeries && adultSeries.length > 0) {
+                            displaySearchResults(adultSeries);
+                        } else {
+                            displaySearchStatus('No se encontraron series +18.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching TMDB search results:', error);
+                         displaySearchStatus('Error al buscar series. Intenta de nuevo.');
+                    });
+            }
+
+            function displaySearchResults(results) {
+                tmdbSearchResults.innerHTML = ''; // Clear previous results
+                 displaySearchStatus(`${results.length} resultados encontrados.`); // Update status
+
+                results.forEach(series => { // Changed 'movie' to 'series'
+                    const listItem = document.createElement('li');
+                    listItem.dataset.seriesId = series.id; // Store TMDB ID
+                    // Store relevant data directly on the list item for easy access
+                    listItem.dataset.name = series.name; // Changed 'title' to 'name'
+                    listItem.dataset.firstAirDate = series.first_air_date || ''; // Changed 'releaseDate' to 'firstAirDate'
+                    listItem.dataset.overview = series.overview || '';
+                    listItem.dataset.posterPath = series.poster_path || '';
+
+                    const posterHtml = series.poster_path
+                        ? `<img src="${TMDB_IMAGE_BASE_URL}${series.poster_path}" alt="${series.name} Poster">` // Changed 'movie.title' to 'series.name'
+                        : `<div class="no-poster">Sin Poster</div>`;
+
+                    // Changed 'release_date' to 'first_air_date' for year extraction
+                    const releaseYear = series.first_air_date ? ` (${series.first_air_date.split('-')[0]})` : '';
+
+                    listItem.innerHTML = `
+                        ${posterHtml}
+                        <div class="result-info">
+                            <strong>${series.name}</strong>
+                            <span>${releaseYear}</span>
+                        </div>
+                    `;
+
+                    listItem.addEventListener('click', handleResultSelection);
+                    tmdbSearchResults.appendChild(listItem);
+                });
+            }
+
+            function handleResultSelection(event) {
+                const selectedItem = event.currentTarget;
+                const seriesId = selectedItem.dataset.seriesId; // Changed 'movieId' to 'seriesId'
+                const name = selectedItem.dataset.name; // Changed 'title' to 'name'
+                const firstAirDate = selectedItem.dataset.firstAirDate; // Changed 'releaseDate' to 'firstAirDate'
+                const overview = selectedItem.dataset.overview;
+                const posterPath = selectedItem.dataset.posterPath;
+
+                // Populate form fields (changed to series inputs)
+                seriesTitleInput.value = name;
+                seriesYearInput.value = firstAirDate ? firstAirDate.split('-')[0] : '';
+                // Genre is tricky from search results, user input is fallback
+                seriesGenreInput.value = ''; // Clear genre from previous search/manual entry
+
+                // Store selected series data globally
+                selectedSeriesData = { // Changed 'selectedMovieData' to 'selectedSeriesData'
+                    id: seriesId,
+                    name: name, // Changed 'title' to 'name'
+                    year: firstAirDate ? firstAirDate.split('-')[0] : '', // Changed 'releaseDate' to 'firstAirDate'
+                    overview: overview,
+                    posterUrl: posterPath ? `${TMDB_IMAGE_BASE_URL.replace('w92', 'w500')}${posterPath}` : null
+                     // Note: Genre names require a separate API call (/tv/{id}) or mapping genre IDs from search results.
+                     // For simplicity, we'll include genres only if manually entered or leave it out if using TMDB data for now.
+                     // User can still add comments and manually entered genre.
+                };
+
+                // Clear search results after selection
+                tmdbSearchResults.innerHTML = '';
+                displaySearchStatus('Serie seleccionada. Puedes añadir comentarios.');
+                tmdbSearchInput.value = name; // Keep selected title in search box as a hint
+            }
+
+            function displaySearchStatus(message) {
+                searchStatus.textContent = message;
+            }
+
+
+            // --- Form Submission ---
+            suggestionForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                // --- Chat ID Check ---
+                if (TELEGRAM_CHAT_ID === 'YOUR_CHAT_ID' || TELEGRAM_CHAT_ID.trim() === '') {
+                    alert('ERROR: ¡Debes configurar el ID del chat de Telegram! Sigue las instrucciones que aparecen en la página.');
+                    console.error('Telegram Chat ID is still the placeholder or empty. Please replace "YOUR_CHAT_ID" in script.js with your actual chat ID.');
+                    // Ensure the instruction block is visible if the ID is not set
+                    chatIdInstruction.classList.remove('hidden');
+                    // Do NOT proceed with sending the message
+                    return;
+                }
+                // --- End Chat ID Check ---
+
+                const seriesComments = seriesCommentsInput.value; // Changed to seriesCommentsInput
+
+                let messageText;
+
+                if (selectedSeriesData) { // Changed 'selectedMovieData' to 'selectedSeriesData'
+                    // Use data from selected TMDB series and user comments
+                    messageText = `🎬 Sugerencia de Serie desde TMDB:\n\n` +
+                                  `Título: ${selectedSeriesData.name}\n` + // Changed 'title' to 'name'
+                                  (selectedSeriesData.year ? `Año: ${selectedSeriesData.year}\n` : '') +
+                                  // Genre is tricky from search results, user input is fallback
+                                  (seriesGenreInput.value.trim() ? `Género (Usuario): ${seriesGenreInput.value.trim()}\n` : '') + // Changed to seriesGenreInput
+                                  (selectedSeriesData.overview ? `Sinopsis: ${selectedSeriesData.overview}\n` : '') +
+                                  (selectedSeriesData.posterUrl ? `Poster: ${selectedSeriesData.posterUrl}\n` : ''); // Include poster URL
+
+                    if (seriesComments.trim()) { // Changed to seriesComments
+                         messageText += `\nComentarios del Usuario: ${seriesComments.trim()}\n`; // Changed to seriesComments
+                    }
+
+
+                } else {
+                    // Fallback to manual form data if no TMDB series was selected
+                    const seriesTitle = seriesTitleInput.value.trim(); // Changed to seriesTitleInput
+                    const seriesYear = seriesYearInput.value.trim(); // Changed to seriesYearInput
+                    const seriesGenre = seriesGenreInput.value.trim(); // Changed to seriesGenreInput
+
+                     // Basic validation: require at least the series title if not selected from TMDB
+                    if (!seriesTitle) {
+                        alert('Por favor, ingresa el título de la serie o búscala en TMDB.');
+                        return;
+                    }
+
+                    messageText = `📝 Sugerencia de Serie Manual:\n\n` +
+                                  `Título: ${seriesTitle}\n` +
+                                  (seriesYear ? `Año: ${seriesYear}\n` : '') +
+                                  (seriesGenre ? `Género: ${seriesGenre}\n` : '');
+
+                     if (seriesComments.trim()) { // Changed to seriesComments
+                         messageText += `Comentarios: ${seriesComments.trim()}\n`; // Changed to seriesComments
+                    }
+                }
+
+                // Add episode report details if enabled
+                if (enableEpisodeReportCheckbox.checked) {
+                    const episodeSeason = episodeSeasonInput.value.trim();
+                    const episodeNumber = episodeNumberInput.value.trim();
+                    const episodeProblem = episodeProblemInput.value.trim();
+
+                    // Only add the section if at least one episode field has content
+                    if (episodeSeason || episodeNumber || episodeProblem) {
+                        messageText += `\n--- Reporte de Capítulo (Opcional) ---\n`;
+                        if (episodeSeason) messageText += `Temporada: ${episodeSeason}\n`;
+                        if (episodeNumber) messageText += `Capítulo: ${episodeNumber}\n`;
+                        if (episodeProblem) messageText += `Problema/Detalle: ${episodeProblem}\n`;
+                    }
+                }
+
+
+                // Telegram Bot API endpoint
+                const telegramApiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+
+                // Prepare data for the API call
+                const data = new URLSearchParams({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: messageText,
+                    parse_mode: 'Markdown' // Optional: Allows basic formatting like bold, italics
+                });
+
+                // Send the message using Fetch API
+                fetch(telegramApiUrl, {
+                    method: 'POST',
+                    body: data
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        // Attempt to read response body for more specific error information
+                        return response.text().then(text => { throw new Error(`Telegram API error! Status: ${response.status}, Body: ${text}`); });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Sugerencia enviada a Telegram:', data);
+                    suggestionForm.reset(); // Clear the form
+                    tmdbSearchInput.value = ''; // Clear search input too
+                    selectedSeriesData = null; // Reset selected series
+                    displaySearchStatus(''); // Clear search status
+                    showThankYouMessage(); // Show the thank you message
+                    // Also reset episode report section
+                    enableEpisodeReportCheckbox.checked = false;
+                    episodeReportSection.classList.add('hidden');
+                    episodeSeasonInput.value = '';
+                    episodeNumberInput.value = '';
+                    episodeProblemInput.value = '';
+                })
+                .catch((error) => {
+                    console.error('Error al enviar sugerencia a Telegram:', error);
+                    alert('Hubo un error al enviar tu sugerencia. Por favor, revisa la consola para más detalles.');
+                    // You might still want to show a thank you message or a different message
+                    // showThankYouMessage(); // Or show an error message instead
+                });
+            });
+
+            function showThankYouMessage() {
+                thankYouMessage.classList.remove('hidden'); // Make the message visible
+
+                // Optionally hide the message after a few seconds
+                setTimeout(() => {
+                    thankYouMessage.classList.add('hidden');
+                }, 5000); // Hide after 5 seconds
+            }
+        });
+    </script>
+</body>
+</html>

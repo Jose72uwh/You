@@ -1,0 +1,128 @@
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeriesFlix - Tu destino de series</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="background-container">
+        <div class="background-gradient"></div>
+        <div class="particles"></div>
+    </div>
+
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <button class="menu-toggle" id="menuToggle">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="nav-link active">Inicio</a>
+                <a href="suggest_series.html" class="nav-link">Pedir un hentai</a>
+                <!-- <a href="#" class="nav-link">Películas</a> -->
+            </div>
+            <div class="nav-actions">
+                <button class="search-btn" id="searchToggle">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Search Overlay -->
+    <div class="search-overlay" id="searchOverlay">
+        <div class="search-container">
+            <div class="search-header">
+                <h2></h2>
+                <button class="search-close" id="searchClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-input-container">
+                <i class="fas fa-search search-icon"></i>
+                <input 
+                    type="text" 
+                    placeholder="¿Qué quieres ver hoy?" 
+                    id="searchInput"
+                    autocomplete="off"
+                >
+                <button class="search-submit">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            <div class="search-suggestions">
+                <h3>Búsquedas populares</h3>
+                <div class="suggestion-tags">
+                    <span class="suggestion-tag">Stranger Things</span>
+                    <span class="suggestion-tag">The Crown</span>
+                    <span class="suggestion-tag">Dark</span>
+                    <span class="suggestion-tag">Money Heist</span>
+                    <span class="suggestion-tag">Arcane</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="main">
+        <section class="hero">
+            <div class="hero-content">
+                <h1 class="hero-title">The Crown</h1>
+                <p class="hero-description">
+                    La aclamada serie sobre la vida de la reina Isabel II, desde su ascenso al trono hasta los eventos más recientes de la monarquía británica.
+                </p>
+                <div class="hero-actions">
+                    <a href="#" class="btn btn-primary" id="heroPlayButton">
+                        <i class="fas fa-play"></i>
+                        Reproducir
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-image"></div>
+                <div class="hero-overlay"></div>
+            </div>
+        </section>
+
+        <section class="featured-section">
+            <div class="section-header">
+                <h2 class="section-title">Recién Agregados</h2>
+                <a href="#" class="see-all-link" data-action="view-all-hentai">Ver todo</a>
+            </div>
+            <div class="series-grid" id="recentlyAdded">
+                <!-- Series cards will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <section class="featured-section">
+            <div class="section-header">
+                <h2 class="section-title">Tendencias</h2>
+            </div>
+            <div class="series-grid" id="trendingSeries">
+                <!-- Series cards will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <section class="featured-section">
+            <div class="section-header">
+                <h2 class="section-title">Novedades</h2>
+            </div>
+            <div class="series-grid" id="newReleases">
+                <!-- Series cards will be populated by JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <img src="https://i.pinimg.com/originals/47/6b/85/476b85783b816fef1d2c56ebe247cc0f.gif" alt="Cargando..." class="loading-gif">
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
